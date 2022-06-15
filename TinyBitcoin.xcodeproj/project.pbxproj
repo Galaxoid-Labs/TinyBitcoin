@@ -7,19 +7,23 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		47E4EE562857B5CA00DDC428 /* PriceData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47E4EE552857B5CA00DDC428 /* PriceData.swift */; };
 		47E5996C28564D3300D50FCE /* TinyBitcoinApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47E5996B28564D3300D50FCE /* TinyBitcoinApp.swift */; };
 		47E5996E28564D3300D50FCE /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47E5996D28564D3300D50FCE /* ContentView.swift */; };
 		47E5997028564D3400D50FCE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 47E5996F28564D3400D50FCE /* Assets.xcassets */; };
 		47E5997328564D3400D50FCE /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 47E5997228564D3400D50FCE /* Preview Assets.xcassets */; };
+		47E5997C28564D4D00D50FCE /* Starscream in Frameworks */ = {isa = PBXBuildFile; productRef = 47E5997B28564D4D00D50FCE /* Starscream */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		47E4EE552857B5CA00DDC428 /* PriceData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PriceData.swift; sourceTree = "<group>"; };
 		47E5996828564D3300D50FCE /* TinyBitcoin.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TinyBitcoin.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		47E5996B28564D3300D50FCE /* TinyBitcoinApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TinyBitcoinApp.swift; sourceTree = "<group>"; };
 		47E5996D28564D3300D50FCE /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		47E5996F28564D3400D50FCE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		47E5997228564D3400D50FCE /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		47E5997428564D3400D50FCE /* TinyBitcoin.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TinyBitcoin.entitlements; sourceTree = "<group>"; };
+		47E5997D28565E8F00D50FCE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -27,6 +31,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				47E5997C28564D4D00D50FCE /* Starscream in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -52,8 +57,10 @@
 		47E5996A28564D3300D50FCE /* TinyBitcoin */ = {
 			isa = PBXGroup;
 			children = (
+				47E5997D28565E8F00D50FCE /* Info.plist */,
 				47E5996B28564D3300D50FCE /* TinyBitcoinApp.swift */,
 				47E5996D28564D3300D50FCE /* ContentView.swift */,
+				47E4EE552857B5CA00DDC428 /* PriceData.swift */,
 				47E5996F28564D3400D50FCE /* Assets.xcassets */,
 				47E5997428564D3400D50FCE /* TinyBitcoin.entitlements */,
 				47E5997128564D3400D50FCE /* Preview Content */,
@@ -85,6 +92,9 @@
 			dependencies = (
 			);
 			name = TinyBitcoin;
+			packageProductDependencies = (
+				47E5997B28564D4D00D50FCE /* Starscream */,
+			);
 			productName = TinyBitcoin;
 			productReference = 47E5996828564D3300D50FCE /* TinyBitcoin.app */;
 			productType = "com.apple.product-type.application";
@@ -113,6 +123,9 @@
 				Base,
 			);
 			mainGroup = 47E5995F28564D3300D50FCE;
+			packageReferences = (
+				47E5997A28564D4D00D50FCE /* XCRemoteSwiftPackageReference "Starscream" */,
+			);
 			productRefGroup = 47E5996928564D3300D50FCE /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -140,6 +153,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				47E5996E28564D3300D50FCE /* ContentView.swift in Sources */,
+				47E4EE562857B5CA00DDC428 /* PriceData.swift in Sources */,
 				47E5996C28564D3300D50FCE /* TinyBitcoinApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -274,6 +288,8 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = TinyBitcoin/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.finance";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -301,6 +317,8 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = TinyBitcoin/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.finance";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -336,6 +354,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		47E5997A28564D4D00D50FCE /* XCRemoteSwiftPackageReference "Starscream" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/daltoniam/Starscream.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		47E5997B28564D4D00D50FCE /* Starscream */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 47E5997A28564D4D00D50FCE /* XCRemoteSwiftPackageReference "Starscream" */;
+			productName = Starscream;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 47E5996028564D3300D50FCE /* Project object */;
 }
