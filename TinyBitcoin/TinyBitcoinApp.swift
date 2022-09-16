@@ -15,10 +15,18 @@ struct TinyBitcoinApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject var priceData = PriceData.shared
     
+    var chart: [CandleMark] {
+        return Array(priceData.chart).sorted { $0.time < $1.time }
+    }
+    
+    var price: Double {
+        return chart.last?.close ?? priceData.lastPrice
+    }
+    
     var menuLabel: String {
         let a = priceData.dailyChange < 0 ? "⬇" : "⬆"
         let change = priceData.dailyChange.formatted(.percent.precision(.fractionLength(2)))
-        return "\(priceData.lastPrice.formatted(.currency(code: "usd").precision(.fractionLength(0)))) \(a) \(change)"
+        return "\(price.formatted(.currency(code: "usd").precision(.fractionLength(0)))) \(a) \(change)"
     }
     
     var body: some Scene {

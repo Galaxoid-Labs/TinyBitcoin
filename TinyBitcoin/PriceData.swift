@@ -18,8 +18,6 @@ class PriceData: ObservableObject {
     @Published var tickerSocketConnected: Bool = false
     @Published var candleSocketConnected: Bool = false
     
-    
-    
     private var tickerSocket: WebSocket?
     private var candleSocket: WebSocket?
     
@@ -165,7 +163,6 @@ class PriceData: ObservableObject {
                             
                             let chart = snap.compactMap({
                                 if let time = $0[0] as? Int, let open = $0[1] as? Double, let close = $0[2] as? Double, let high = $0[3] as? Double, let low = $0[4] as? Double {
-//                                    print(time)
                                     return CandleMark(id: time, time: Date(timeIntervalSince1970: TimeInterval(time) / 1000),
                                                       open: open, close: close, high: high, low: low)
                                 }

@@ -16,35 +16,45 @@ struct ContentView: View {
     var chart: [CandleMark] {
         return Array(priceData.chart).sorted { $0.time < $1.time }
     }
+    
+    var price: Double {
+        return chart.last?.close ?? priceData.lastPrice
+    }
 
-    var yAxis: [Double] {
-        return chart.map { $0.close }.sorted(by: { $0 < $1 })
+    var yAxis: ClosedRange<Double> {
+        var combined = chart.map{ $0.open }
+        combined.append(contentsOf: chart.map{ $0.close })
+        let sorted = combined.sorted(by: { $0 < $1 })
+        let first = (sorted.first ?? 0.0)
+        let last = (sorted.last ?? 0.0)
+        return first...last
     }
     
-    var xAxis: [Date] {
-        return chart.map { $0.time }.sorted(by: { $0 < $1 })
+    var xAxis: ClosedRange<Date> {
+        let sorted = chart.map { $0.time }.sorted(by: { $0 < $1 })
+        return sorted.count > 2 ? sorted.first!...sorted.last! : Date.now...Date.now.addingTimeInterval(100)
     }
     
     var body: some View {
         LazyVStack(spacing: 16) {
             
             HStack {
-                
+
                 HStack(alignment: .firstTextBaseline) {
-                    Text("\(priceData.lastPrice.formatted(.currency(code: "usd").precision(.fractionLength(0))))")
+                    Text("\(price.formatted(.currency(code: "usd").precision(.fractionLength(0))))")
                         .font(.system(size: 22, weight: .bold))
                     Text(getChangeText())
                         .font(.system(size: 12, weight: .bold))
                         .foregroundColor(priceData.dailyChange < 0 ? .red : .green)
                 }
-                
+
                 Spacer()
-                
+
                 HStack {
                     Text("Tiny Bitcoin")
                         .font(.system(.title2, design: .rounded, weight: .heavy))
                         .foregroundStyle(.secondary)
-                    
+
                     Image("btc")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
@@ -68,12 +78,12 @@ struct ContentView: View {
             
             Chart {
                 ForEach(chart, id: \.close) {
-                    
+
                     RectangleMark(x: .value("Date", $0.time),
                                   yStart: .value("Price", $0.open),
                                   yEnd: .value("Price", $0.close))
                         .foregroundStyle($0.close < $0.open ? .red : .green)
-                    
+
                     BarMark(x: .value("Date", $0.time),
                             yStart: .value("Price", $0.low),
                             yEnd: .value("Price", $0.high),
@@ -81,13 +91,13 @@ struct ContentView: View {
                         .foregroundStyle($0.close < $0.open ? .red : .green)
 
                 }
-                
+
                 if let l = chart.last {
                     RuleMark(y: .value("Price", l.close))
                         .lineStyle(StrokeStyle(lineWidth: 1, dash: [5]))
                         .foregroundStyle(l.close < l.open ? .red : .green)
                 }
-                
+
             }
             .chartXScale(domain: xAxis, range: .plotDimension(startPadding: 8, endPadding: 8))
             .chartYScale(domain: yAxis, range: .plotDimension(startPadding: 8, endPadding: 8))
