@@ -2,142 +2,15 @@
 //  ContentView.swift
 //  TinyBitcoin
 //
-//  Created by Jacob Davis on 6/12/22.
+//  Created by Jacob Davis on 10/26/22.
 //
 
 import SwiftUI
-import Charts
 
 struct ContentView: View {
     
     @EnvironmentObject var priceData: PriceData
     @State private var retrying = false
-    
-    var chart: [CandleMark] {
-        return Array(priceData.chart).sorted { $0.time < $1.time }
-    }
-    
-    var price: Double {
-        return chart.last?.close ?? priceData.lastPrice
-    }
-
-    var yAxis: ClosedRange<Double> {
-        var combined = chart.map{ $0.open }
-        combined.append(contentsOf: chart.map{ $0.close })
-        let sorted = combined.sorted(by: { $0 < $1 })
-        let first = (sorted.first ?? 0.0)
-        let last = (sorted.last ?? 0.0)
-        return first...last
-    }
-    
-    var xAxis: ClosedRange<Date> {
-        let sorted = chart.map { $0.time }.sorted(by: { $0 < $1 })
-        return sorted.count > 2 ? sorted.first!...sorted.last! : Date.now...Date.now.addingTimeInterval(100)
-    }
-    
-    var body: some View {
-        LazyVStack(spacing: 16) {
-            
-            HStack {
-
-                HStack(alignment: .firstTextBaseline) {
-                    Text("\(price.formatted(.currency(code: "usd").precision(.fractionLength(0))))")
-                        .font(.system(size: 22, weight: .bold))
-                    Text(getChangeText())
-                        .font(.system(size: 12, weight: .bold))
-                        .foregroundColor(priceData.dailyChange < 0 ? .red : .green)
-                }
-
-                Spacer()
-
-                HStack {
-                    Text("Tiny Bitcoin")
-                        .font(.system(.title2, design: .rounded, weight: .heavy))
-                        .foregroundStyle(.secondary)
-
-                    Image("btc")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 25)
-                }
-            }
-            
-            Picker("", selection: $priceData.chartTime) {
-                ForEach(PriceData.ChartTime.allCases, id: \.self) { time in
-                    Text(time.rawValue)
-                }
-            }
-            .pickerStyle(.segmented)
-            .onChange(of: priceData.chartTime) { newValue in
-                Task {
-                    await PriceData.shared.connectCandleSocket()
-                }
-            }
-            .padding(.horizontal, 16)
-            .offset(x: -3, y: 0)
-            
-            Chart {
-                ForEach(chart, id: \.close) {
-
-                    RectangleMark(x: .value("Date", $0.time),
-                                  yStart: .value("Price", $0.open),
-                                  yEnd: .value("Price", $0.close))
-                        .foregroundStyle($0.close < $0.open ? .red : .green)
-
-                    BarMark(x: .value("Date", $0.time),
-                            yStart: .value("Price", $0.low),
-                            yEnd: .value("Price", $0.high),
-                            width: .fixed(1))
-                        .foregroundStyle($0.close < $0.open ? .red : .green)
-
-                }
-
-                if let l = chart.last {
-                    RuleMark(y: .value("Price", l.close))
-                        .lineStyle(StrokeStyle(lineWidth: 1, dash: [5]))
-                        .foregroundStyle(l.close < l.open ? .red : .green)
-                }
-
-            }
-            .chartXScale(domain: xAxis, range: .plotDimension(startPadding: 8, endPadding: 8))
-            .chartYScale(domain: yAxis, range: .plotDimension(startPadding: 8, endPadding: 8))
-            .frame(height: 150)
-            .padding(.vertical, 8)  // TODO: might need tweek?
-
-            HStack {
-                HStack {
-                    Button(action: {
-                        Task {
-                            retrying = true
-                            await PriceData.shared.disconnectTickerSocket()
-                            await PriceData.shared.disconnectCandleSocket()
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
-                                Task {
-                                    await PriceData.shared.connectTickerSocket()
-                                    await PriceData.shared.connectCandleSocket()
-                                    retrying = false
-                                }
-                            })
-                        }
-                    }) {
-                        Image(systemName: "circle.fill")
-                            .foregroundColor(priceData.tickerSocketConnected ? .green : .red)
-                    }
-                    .buttonStyle(.plain)
-                    .disabled(retrying)
-                    Text(getConnectText())
-                }
-
-                Spacer()
-                Button("Quit", action: {
-                    NSApp.terminate(self)
-                })
-                .buttonStyle(.bordered)
-            }
-
-        }
-        .padding()
-    }
     
     func getChangeText() -> String {
         let a = priceData.dailyChange < 0 ? "⬇" : "⬆"
@@ -154,15 +27,69 @@ struct ContentView: View {
             return "Not connected"
         }
     }
+    
+    var body: some View {
+        ZStack {
+            Color.background
+                .edgesIgnoringSafeArea(.all)
+            
+            LazyVStack(spacing: 16) {
+                
+                Text("Tiny Bitcoin")
+                    .font(.system(.title2, design: .monospaced, weight: .bold))
+                    .foregroundStyle(Color.text)
+                
+                MarketView()
+                
+                HStack {
+                    HStack {
+                        Button(action: {
+                            Task {
+                                retrying = true
+                                await PriceData.shared.disconnectTickerSocket()
+                                await PriceData.shared.disconnectCandleSocket()
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
+                                    Task {
+                                        await PriceData.shared.connectTickerSocket()
+                                        await PriceData.shared.connectCandleSocket()
+                                        retrying = false
+                                    }
+                                })
+                            }
+                        }) {
+                            Image(systemName: "circle.fill")
+                                .foregroundColor(priceData.tickerSocketConnected ? .green : .red)
+                        }
+                        .buttonStyle(.plain)
+                        .disabled(retrying)
+                        Text(getConnectText())
+                            .font(.subheadline)
+                            .foregroundColor(Color.text.opacity(0.8))
+                    }
+
+                    Spacer()
+                    Button("Quit", action: {
+                        NSApp.terminate(self)
+                    })
+                    .font(.system(.subheadline, design: .monospaced))
+                    .buttonStyle(.plain)
+                    .padding(.vertical, 2)
+                    .padding(.horizontal, 4)
+                    .background(Color.text)
+                    
+                }
+                
+            }
+            .padding()
+
+        }
+    }
 }
 
-struct ContentView_Previews: PreviewProvider {
+struct ContentView2_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
+            .frame(width: 435, height: 315)
             .environmentObject(PriceData.shared)
-            .task {
-                await PriceData.shared.connectTickerSocket()
-                await PriceData.shared.connectCandleSocket()
-            }
     }
 }

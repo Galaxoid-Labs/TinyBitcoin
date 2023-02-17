@@ -32,12 +32,11 @@ struct TinyBitcoinApp: App {
     var body: some Scene {
         MenuBarExtra(priceData.lastPrice > .zero ? menuLabel : "₿") {
             ContentView()
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .frame(width: 435, height: 315)
                 .background(Color(nsColor: NSColor.windowBackgroundColor))
                 .environmentObject(priceData)
         }
         .menuBarExtraStyle(.window)
-        .defaultSize(width: 500, height: 275)
     }
 }
 
